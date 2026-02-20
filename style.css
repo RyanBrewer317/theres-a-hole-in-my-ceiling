@@ -20,12 +20,17 @@ input {
     left: 0;
     top: 100pt;
     margin-inline: auto;
+    background-color: white;
+
 }
 
-#game-view {
-    height: 500pt;
-    width: 100%;
-    box-sizing: border-box;
+body {
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;   
 }
 
 input {
@@ -42,4 +47,41 @@ input:focus {
     font-weight: 400;
     font-style: normal;
 }
-  
+
+/* Game elements */
+
+#game-view {
+    height: 500px;
+    width: 800px;
+    box-sizing: border-box;
+    background-color: red;
+    
+}
+
+#drip-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    align-items: center;
+}
+
+#cup {
+    width: 100px;
+    height: 100px;
+    background-color: grey;
+}
+
+#drip {
+    width: 100px;
+    height: 100px;
+    background-color: blue;
+
+}
+
+#hole {
+    width: 100px;
+    height: 100px;
+    background-color: black;
+
+}
