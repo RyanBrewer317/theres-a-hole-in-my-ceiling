@@ -8,13 +8,17 @@
     <script src="index.js" defer></script>
 </head>
 <body>
-    <div id="new-task">
+    <div id="new-task" class="menu">
         <p id="new-task-header">Welcome!</p>
         <label for="task-name">Watcha workin' on?</label>
         <input name="task-name" id="task-name" placeholder="Task name..." class="knewave-regular">
         <label for="task-duration">How long will this sitting last?</label>
         <input name="task-duration" id="task-duration" type="number" placeholder="Minutes..." class="knewave-regular">
         <button id="start-task">Go!</button>
+    </div>
+    <div id="complete-task" class="menu" hidden>
+        <p id="complete-task-header">Great Job!</p>
+        <button id="restart-task">Try another task</button>
     </div>
     <div id="game-view">
         <div id="drip-column">

@@ -10,7 +10,7 @@ input {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-#new-task {
+.menu {
     width: 200pt;
     padding: 10pt;
     border: 1px solid lightgrey;
