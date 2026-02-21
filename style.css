@@ -21,7 +21,7 @@ input {
     top: 100pt;
     margin-inline: auto;
     background-color: white;
-
+    z-index: 2;
 }
 
 body {
@@ -59,29 +59,30 @@ input:focus {
 }
 
 #drip-column {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    position: relative;
     height: 100%;
-    align-items: center;
 }
 
 #cup {
     width: 100px;
     height: 100px;
     background-color: grey;
+    position: absolute;
+    bottom: 0;
+    left: 350px;
 }
 
-#drip {
+.drip {
     width: 100px;
     height: 100px;
     background-color: blue;
-
+    position: absolute;
 }
 
 #hole {
     width: 100px;
     height: 100px;
     background-color: black;
-
+    position: absolute;
+    left: 350px;
 }
