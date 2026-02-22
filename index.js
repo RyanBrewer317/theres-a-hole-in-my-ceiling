@@ -57,8 +57,10 @@ function physics_loop() {
     // move drips downwards
     for (let i = 0; i < drip_array.length; i++) {
         const drip = drip_array[i];
-
-        drip.velY -= 300 * delta; // gravity
+        console.log(drip.velY);
+        // 3267 = (9.8m/s^2)*(800px/2.4m). Meters cancel, leaving px/s^2
+        // 800px is the viewport height, 2.4m is the irl room height
+        drip.velY -= 3267 * delta; // gravity
         drip.posY += drip.velY * delta;
         drip.posX += drip.velX * delta;
         drip.element.style.bottom = drip.posY + "px";
@@ -72,7 +74,9 @@ function physics_loop() {
             num_drips ++;
             $cup.innerHTML = task_name + num_drips;
 
-            i--;
+            // splicing means the next array item went down in position,
+            // to the current item's position.
+            i--; // this compensates; it'll cancel out with the i++
         }
     }
 }
@@ -81,7 +85,7 @@ function create_drip() {
     const $drip_el = document.createElement("div");
     $drip_el.classList.add("drip");
     
-    drip_array.push(new Drip(350, 400, random_centered(10), random_centered(10), $drip_el));
+    drip_array.push(new Drip(350, 400, random_centered(10), 0, $drip_el));
     $drip_column.appendChild($drip_el);
 }
 
