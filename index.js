@@ -1,4 +1,25 @@
 
+class Drip {
+    constructor(posX, posY, velX, velY, $element) {
+        this.posX = posX;
+        this.posY = posY;
+        this.velX = velX;
+        this.velY = velY;
+        this.element = $element;
+    }
+    step(delta) {
+        // 2042 = (9.8m/s^2)*(500px/2.4m). Meters cancel, leaving px/s^2
+        // 500px is the viewport height, 2.4m is the irl room height
+        this.velY -= 2042 * delta; // delta is in seconds, so velY is in px/s
+        this.posY += this.velY * delta; // so posY and posX are in px
+        this.posX += this.velX * delta;
+    }
+    draw() {
+        this.element.style.bottom = this.posY + "px";
+        this.element.style.left = this.posX + "px";
+    }
+}
+
 let last_physics;
 let start_time = Date.now();
 let last_drip_time = start_time;
@@ -90,34 +111,11 @@ function create_drip() {
     $drip_column.appendChild($drip_el);
 }
 
-class Drip {
-    constructor(posX, posY, velX, velY, $element) {
-        this.posX = posX;
-        this.posY = posY;
-        this.velX = velX;
-        this.velY = velY;
-        this.element = $element;
-    }
-    step(delta) {
-        // 2042 = (9.8m/s^2)*(500px/2.4m). Meters cancel, leaving px/s^2
-        // 500px is the viewport height, 2.4m is the irl room height
-        this.velY -= 2042 * delta; // delta is in seconds, so velY is in px/s
-        this.posY += this.velY * delta; // so posY and posX are in px
-        this.posX += this.velX * delta;
-    }
-    draw() {
-        this.element.style.bottom = this.posY + "px";
-        this.element.style.left = this.posX + "px";
-    }
-}
-
-// util functions
-
-function random_in_range(min, max) {
-    return Math.random() * (min - max) - min;
-}
-
-function random_centered(max) {
-    return random_in_range(-max, max)
+function random_centered(radius) {
+    // 0 < Math.random() < 1
+    // 0 < Math.random()*(2r) < 2r     (multiply by 2r)
+    // -r < Math.random()*(2r)-r < r   (subtract r)
+    // therefore, this returns a value between -r and r
+    return Math.random() * (2 * radius) - radius;
 }
 
