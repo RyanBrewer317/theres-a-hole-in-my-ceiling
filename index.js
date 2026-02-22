@@ -48,10 +48,15 @@ $start_task.addEventListener("click", (e) => {
     clearInterval(interval);
     interval = setInterval(physics_loop, 1);
     task_name = $task_name.value;
-    const task_duration = $task_duration.value * 60 * 1000; // covert from minutes to ms
+    const task_in_minutes = $task_duration.value;
+    const task_duration = task_in_minutes * 60 * 1000; // covert from minutes to ms
     // set a timeout for task end
     setTimeout((e) => {
         clearInterval(interval)
+        const old_tasks_completed_str = localStorage.getItem("tasks-completed") || "";
+        const new_tasks_completed_str = old_tasks_completed_str + "\"" + encodeURI(task_name) + "\"" + task_in_minutes + ",";
+        console.log(new_tasks_completed_str);
+        localStorage.setItem("tasks-completed", new_tasks_completed_str);
         $complete_task.hidden = false;
     }, task_duration) 
 })
