@@ -146,3 +146,5 @@ function draw_completed_tasks() {
         $completed_tasks_list.appendChild($p);
     }
 }
+
+draw_completed_tasks();
