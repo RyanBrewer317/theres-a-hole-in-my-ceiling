@@ -54,9 +54,10 @@ $start_task.addEventListener("click", (e) => {
     setTimeout((e) => {
         clearInterval(interval)
         const old_tasks_completed_str = localStorage.getItem("tasks-completed") || "";
-        const new_tasks_completed_str = old_tasks_completed_str + "\"" + encodeURI(task_name) + "\"" + task_in_minutes + ",";
+        const new_tasks_completed_str = old_tasks_completed_str + "\"" + encodeURI(task_name) + "\"" + task_in_minutes;
         console.log(new_tasks_completed_str);
         localStorage.setItem("tasks-completed", new_tasks_completed_str);
+        draw_completed_tasks();
         $complete_task.hidden = false;
     }, task_duration) 
 })
@@ -124,3 +125,24 @@ function random_centered(radius) {
     return Math.random() * (2 * radius) - radius;
 }
 
+function draw_completed_tasks() {
+    const completed_tasks_str = localStorage.getItem("tasks-completed");
+    const completed_tasks_pieces = completed_tasks_str.split("\"");
+    const $completed_tasks_list = document.getElementById("completed-tasks-temp");
+    $completed_tasks_list.innerHTML = "";
+    // the stored tasks format is `"name1"time1"name2"time2` etc.
+    // so we split it on the quotation marks, into ["", "name1", "time1", "name2", "time2"]
+    // i = 1 skips the first one, i += 2 means we progress in twos
+    for (let i = 1; i < completed_tasks_pieces.length; i += 2) {
+        const name = decodeURI(completed_tasks_pieces[i]);
+        const minutes = parseInt(completed_tasks_pieces[i+1]);
+        const $p = document.createElement("p");
+        const $name = document.createElement("i");
+        $name.innerHTML = name;
+        $p.appendChild($name);
+        $p.appendChild(document.createTextNode(
+            ": " + minutes + (minutes == 1? " minute" : " minutes")
+        ));
+        $completed_tasks_list.appendChild($p);
+    }
+}

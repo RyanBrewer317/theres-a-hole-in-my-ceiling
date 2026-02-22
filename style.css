@@ -24,15 +24,6 @@ input {
     z-index: 2;
 }
 
-body {
-    height: 100vh;
-    width: 100vw;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;   
-}
-
 input {
     border: none;
     margin: 5pt;
@@ -55,7 +46,7 @@ input:focus {
     width: 800px;
     box-sizing: border-box;
     background-color: red;
-    
+    margin: 100px auto auto auto;
 }
 
 #drip-column {
@@ -85,4 +76,9 @@ input:focus {
     background-color: black;
     position: absolute;
     left: 350px;
+}
+
+#completed-tasks-temp {
+    width: 800px;
+    margin: auto;
 }
