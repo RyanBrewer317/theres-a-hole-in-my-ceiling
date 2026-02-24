@@ -45,7 +45,7 @@ let task_name;
 
 $start_task.addEventListener("click", (e) => {
     $new_task.hidden = true;
-    $water.style.maxHeight = "0";
+    $water.style.height = "0";
     const now = Date.now();
     start_time = now;
     last_physics = now;
@@ -56,7 +56,7 @@ $start_task.addEventListener("click", (e) => {
     interval = setInterval(()=>physics_loop(task_duration), 1);
     // set a timeout for task end
     setTimeout((e) => {
-        $water.style.maxHeight = "100px";
+        $water.style.height = "100px";
         clearInterval(interval)
         const old_tasks_completed_str = localStorage.getItem("tasks-completed") || "";
         const new_tasks_completed_str = old_tasks_completed_str + "\"" + encodeURI(task_name) + "\"" + task_in_minutes;
@@ -98,7 +98,7 @@ function physics_loop(task_duration) {
             drip_array.splice(i, 1);
             // update cup
             num_drips++;
-            $water.style.maxHeight = (100 * elapsed_time / task_duration) + "px";
+            $water.style.height = (100 * elapsed_time / task_duration) + "px";
 
             // splicing means the next array item went down in position,
             // to the current item's position.
@@ -110,10 +110,11 @@ function physics_loop(task_duration) {
 }
 
 function create_drip() {
-    const $drip_el = document.createElement("div");
+    const $drip_el = document.createElement("img");
+    $drip_el.src = "droplet.png"
     $drip_el.classList.add("drip");
     const drip = new Drip(
-        350, // starting x position, px
+        395, // starting x position, px
         400, // starting y position, px
         random_centered(10), // starting x velocity, -10px/s < v < 10px/s
         0, // starting y velocity, px/s

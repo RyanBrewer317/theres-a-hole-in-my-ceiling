@@ -57,7 +57,6 @@ input:focus {
 #cup {
     width: 100px;
     height: 100px;
-    background-color: grey;
     position: absolute;
     bottom: 0;
     left: 350px;
@@ -67,20 +66,20 @@ input:focus {
     position: absolute;
     bottom: 0;
     left: 350px;
-    max-height: 0;
+    height: 0;
+    width: 100px;
     overflow: hidden;
 }
 
 #water-color {
+    position: absolute;
+    bottom: 0;
     height: 100px;
     width: 100px;
-    background-color: blue;
 }
 
 .drip {
-    width: 100px;
-    height: 100px;
-    background-color: blue;
+    width: 10px;
     position: absolute;
 }
 

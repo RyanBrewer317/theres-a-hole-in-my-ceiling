@@ -5,6 +5,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Knewave&display=swap" rel="stylesheet">
+    <link href="droplet.png" rel="preload" as="image" type="image/png">
+    <link href="empty-jar.png" rel="preload" as="image" type="image/png">
+    <link href="full-jar.png" rel="preload" as="image" type="image/png">
     <script src="index.js" defer></script>
 </head>
 <body>
@@ -22,9 +25,9 @@
     </div>
     <div id="game-view">
         <div id="drip-column">
-            <div id="cup"></div>
+            <img id="cup" src="empty-jar.png">
             <div id="water">
-                <div id="water-color"></div>
+                <img id="water-color" src="full-jar.png">
             </div>
         </div>
     </div>
