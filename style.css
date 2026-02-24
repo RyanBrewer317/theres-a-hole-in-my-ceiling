@@ -63,19 +63,25 @@ input:focus {
     left: 350px;
 }
 
+#water {
+    position: absolute;
+    bottom: 0;
+    left: 350px;
+    max-height: 0;
+    overflow: hidden;
+}
+
+#water-color {
+    height: 100px;
+    width: 100px;
+    background-color: blue;
+}
+
 .drip {
     width: 100px;
     height: 100px;
     background-color: blue;
     position: absolute;
-}
-
-#hole {
-    width: 100px;
-    height: 100px;
-    background-color: black;
-    position: absolute;
-    left: 350px;
 }
 
 #completed-tasks-temp {

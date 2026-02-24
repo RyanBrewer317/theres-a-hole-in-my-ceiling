@@ -37,6 +37,7 @@ const $drip_column = document.getElementById("drip-column");
 const $task_name = document.getElementById("task-name");
 const $task_duration = document.getElementById("task-duration");
 const $cup = document.getElementById("cup");
+const $water = document.getElementById("water");
 
 let interval;
 
@@ -44,20 +45,25 @@ let task_name;
 
 $start_task.addEventListener("click", (e) => {
     $new_task.hidden = true;
-    last_physics = Date.now();
-    clearInterval(interval);
-    interval = setInterval(physics_loop, 1);
+    $water.style.maxHeight = "0";
+    const now = Date.now();
+    start_time = now;
+    last_physics = now;
     task_name = $task_name.value;
     const task_in_minutes = $task_duration.value;
     const task_duration = task_in_minutes * 60 * 1000; // covert from minutes to ms
+    clearInterval(interval);
+    interval = setInterval(()=>physics_loop(task_duration), 1);
     // set a timeout for task end
     setTimeout((e) => {
+        $water.style.maxHeight = "100px";
         clearInterval(interval)
         const old_tasks_completed_str = localStorage.getItem("tasks-completed") || "";
         const new_tasks_completed_str = old_tasks_completed_str + "\"" + encodeURI(task_name) + "\"" + task_in_minutes;
-        console.log(new_tasks_completed_str);
         localStorage.setItem("tasks-completed", new_tasks_completed_str);
         draw_completed_tasks();
+        drip_array.map(drip=>$drip_column.removeChild(drip.element));
+        drip_array.length = 0;
         $complete_task.hidden = false;
     }, task_duration) 
 })
@@ -67,7 +73,7 @@ $restart_task.addEventListener("click", (e) => {
     $new_task.hidden = false;
 })
 
-function physics_loop() {
+function physics_loop(task_duration) {
     // time since start of task
     const now = Date.now();
     elapsed_time = now - start_time;
@@ -92,7 +98,7 @@ function physics_loop() {
             drip_array.splice(i, 1);
             // update cup
             num_drips++;
-            $cup.innerHTML = task_name + num_drips;
+            $water.style.maxHeight = (100 * elapsed_time / task_duration) + "px";
 
             // splicing means the next array item went down in position,
             // to the current item's position.
@@ -129,7 +135,7 @@ function draw_completed_tasks() {
     const completed_tasks_str = localStorage.getItem("tasks-completed");
     const completed_tasks_pieces = completed_tasks_str.split("\"");
     const $completed_tasks_list = document.getElementById("completed-tasks-temp");
-    $completed_tasks_list.innerHTML = "";
+    $completed_tasks_list.innerHTML = "<button onclick=\"localStorage.clear();draw_completed_tasks();\">clear</button>";
     // the stored tasks format is `"name1"time1"name2"time2` etc.
     // so we split it on the quotation marks, into ["", "name1", "time1", "name2", "time2"]
     // i = 1 skips the first one, i += 2 means we progress in twos
