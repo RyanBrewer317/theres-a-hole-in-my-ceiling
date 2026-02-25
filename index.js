@@ -36,7 +36,7 @@ const $complete_task = document.getElementById("complete-task");
 const $drip_column = document.getElementById("drip-column");
 const $task_name = document.getElementById("task-name");
 const $task_duration = document.getElementById("task-duration");
-const $cup = document.getElementById("cup");
+const $jar = document.getElementById("jar");
 
 let interval;
 
@@ -85,14 +85,14 @@ function physics_loop() {
     for (let i = 0; i < drip_array.length; i++) {
         const drip = drip_array[i];
         drip.step(delta);
-        // if the drip is in the cup
+        // if the drip is in the jar
         if (drip.posY < 0) {
             // remove drip
             $drip_column.removeChild(drip.element);
             drip_array.splice(i, 1);
-            // update cup
+            // update jar
             num_drips++;
-            $cup.innerHTML = task_name + num_drips;
+            $jar.innerHTML = task_name + num_drips;
 
             // splicing means the next array item went down in position,
             // to the current item's position.
