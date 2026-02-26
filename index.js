@@ -36,7 +36,7 @@ const $complete_task = document.getElementById("complete-task");
 const $drip_column = document.getElementById("drip-column");
 const $task_name = document.getElementById("task-name");
 const $task_duration = document.getElementById("task-duration");
-const $jar = document.getElementById("jar");
+const $current_jar = document.getElementById("current-jar");
 
 let interval;
 
@@ -58,6 +58,7 @@ $start_task.addEventListener("click", (e) => {
         console.log(new_tasks_completed_str);
         localStorage.setItem("tasks-completed", new_tasks_completed_str);
         draw_completed_tasks();
+        draw_jar_stack();
         $complete_task.hidden = false;
     }, task_duration) 
 })
@@ -92,7 +93,7 @@ function physics_loop() {
             drip_array.splice(i, 1);
             // update jar
             num_drips++;
-            $jar.innerHTML = task_name + num_drips;
+            $current_jar.innerHTML = task_name + num_drips;
 
             // splicing means the next array item went down in position,
             // to the current item's position.
@@ -148,3 +149,40 @@ function draw_completed_tasks() {
 }
 
 draw_completed_tasks();
+
+function draw_jar_stack() {
+    const completed_tasks_str = localStorage.getItem("tasks-completed");
+    const completed_tasks_pieces = completed_tasks_str.split("\"");
+    const $jar_stack = document.getElementById("jar-stack");
+    $jar_stack.innerHTML = ""
+    // this math I just found by plotting out the coordiantes of a triangle
+    let prev_max_x = 0;
+    let prev_max_y = 0;
+    let x = 0;
+    let y = 0;
+    // the stored tasks format is `"name1"time1"name2"time2` etc.
+    // so we split it on the quotation marks, into ["", "name1", "time1", "name2", "time2"]
+    // i = 1 skips the first one, i += 2 means we progress in twos
+    for (let i = 1; i < completed_tasks_pieces.length; i += 2) {
+        const name = decodeURI(completed_tasks_pieces[i]);
+        const minutes = parseInt(completed_tasks_pieces[i+1]);
+        const $new_jar = document.createElement("div");
+        $new_jar.innerText = name + " " + minutes;
+        $new_jar.classList.add("jar");
+        $new_jar.style.left = x * 100 + "px"; // 100 is just the size of the jar
+        $new_jar.style.bottom = y * 100 + "px";
+        x -= .5;
+        y += 1;
+        if (x < prev_max_x * .5) { 
+            prev_max_x += 1; 
+            x = prev_max_x; 
+        }
+        if (y > prev_max_y) { 
+            y = 0; 
+            prev_max_y += 1; 
+        }
+        $jar_stack.appendChild($new_jar);
+    }
+}
+
+draw_jar_stack()
