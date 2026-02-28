@@ -47,6 +47,8 @@ input:focus {
     box-sizing: border-box;
     background-color: red;
     margin: 100px auto auto auto;
+    position: relative;
+
 }
 
 #drip-column {
@@ -54,13 +56,38 @@ input:focus {
     height: 100%;
 }
 
-#cup {
-    width: 100px;
-    height: 100px;
+#jar-stack {
     position: absolute;
+    display: flex;
+    background-color: greenyellow;
+    gap: 5px;
     bottom: 0;
     left: 350px;
 }
+
+.jar {
+    background-color: grey;
+}
+
+#current-jar, .jar {
+    width: 100px;
+    height: 100px;
+    position: absolute;
+}
+
+#current-jar {
+    bottom: 0;
+    left: 350px;
+}
+
+#jar-stack {
+    position: absolute;
+    display: flex;
+    background-color: greenyellow;
+    gap: 5px;
+    bottom: 0;
+}
+
 
 #water {
     position: absolute;
@@ -87,3 +114,4 @@ input:focus {
     width: 800px;
     margin: auto;
 }
+

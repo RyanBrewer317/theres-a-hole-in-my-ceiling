@@ -36,7 +36,7 @@ const $complete_task = document.getElementById("complete-task");
 const $drip_column = document.getElementById("drip-column");
 const $task_name = document.getElementById("task-name");
 const $task_duration = document.getElementById("task-duration");
-const $cup = document.getElementById("cup");
+const $current_jar = document.getElementById("current-jar");
 const $water = document.getElementById("water");
 
 let interval;
@@ -91,12 +91,12 @@ function physics_loop(task_duration) {
     for (let i = 0; i < drip_array.length; i++) {
         const drip = drip_array[i];
         drip.step(delta);
-        // if the drip is in the cup
+        // if the drip is in the jar
         if (drip.posY < 0) {
             // remove drip
             $drip_column.removeChild(drip.element);
             drip_array.splice(i, 1);
-            // update cup
+            // update jar
             num_drips++;
             $water.style.height = (100 * elapsed_time / task_duration) + "px";
 
@@ -133,7 +133,7 @@ function random_centered(radius) {
 }
 
 function draw_completed_tasks() {
-    const completed_tasks_str = localStorage.getItem("tasks-completed");
+    const completed_tasks_str = localStorage.getItem("tasks-completed") || "";
     const completed_tasks_pieces = completed_tasks_str.split("\"");
     const $completed_tasks_list = document.getElementById("completed-tasks-temp");
     $completed_tasks_list.innerHTML = "<button onclick=\"localStorage.clear();draw_completed_tasks();\">clear</button>";
@@ -155,3 +155,40 @@ function draw_completed_tasks() {
 }
 
 draw_completed_tasks();
+
+function draw_jar_stack() {
+    const completed_tasks_str = localStorage.getItem("tasks-completed") || "";
+    const completed_tasks_pieces = completed_tasks_str.split("\"");
+    const $jar_stack = document.getElementById("jar-stack");
+    $jar_stack.innerHTML = ""
+    // this math I just found by plotting out the coordiantes of a triangle
+    let prev_max_x = 0;
+    let prev_max_y = 0;
+    let x = 0;
+    let y = 0;
+    // the stored tasks format is `"name1"time1"name2"time2` etc.
+    // so we split it on the quotation marks, into ["", "name1", "time1", "name2", "time2"]
+    // i = 1 skips the first one, i += 2 means we progress in twos
+    for (let i = 1; i < completed_tasks_pieces.length; i += 2) {
+        const name = decodeURI(completed_tasks_pieces[i]);
+        const minutes = parseInt(completed_tasks_pieces[i+1]);
+        const $new_jar = document.createElement("div");
+        $new_jar.innerText = name + " " + minutes;
+        $new_jar.classList.add("jar");
+        $new_jar.style.left = x * 110 + "px"; // 100 is the size of the jar, 110 gives a gap 
+        $new_jar.style.bottom = y * 100 + "px";
+        x -= .5;
+        y += 1;
+        if (x < prev_max_x * .5) { 
+            prev_max_x += 1; 
+            x = prev_max_x; 
+        }
+        if (y > prev_max_y) { 
+            y = 0; 
+            prev_max_y += 1; 
+        }
+        $jar_stack.appendChild($new_jar);
+    }
+}
+
+draw_jar_stack()
