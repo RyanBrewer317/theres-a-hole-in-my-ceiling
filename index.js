@@ -8,15 +8,15 @@ class Drip {
         this.element = $element;
     }
     step(delta) {
-        // 2042 = (9.8m/s^2)*(500px/2.4m). Meters cancel, leaving px/s^2
-        // 500px is the viewport height, 2.4m is the irl room height
-        this.velY -= 2042 * delta; // delta is in seconds, so velY is in px/s
-        this.posY += this.velY * delta; // so posY and posX are in px
+        // 2450 = (9.8m/s^2)*(600pt/2.4m). Meters cancel, leaving pt/s^2
+        // 600pt is the viewport height, 2.4m is the irl room height
+        this.velY -= 2450 * delta; // delta is in seconds, so velY is in pt/s
+        this.posY += this.velY * delta; // so posY and posX are in pt
         this.posX += this.velX * delta;
     }
     draw() {
-        this.element.style.bottom = this.posY + "px";
-        this.element.style.left = this.posX + "px";
+        this.element.style.bottom = this.posY + "pt";
+        this.element.style.left = this.posX + "pt";
     }
 }
 
@@ -56,7 +56,7 @@ $start_task.addEventListener("click", (e) => {
     interval = setInterval(()=>physics_loop(task_duration), 1);
     // set a timeout for task end
     setTimeout((e) => {
-        $water.style.height = "100px";
+        $water.style.height = "100pt";
         clearInterval(interval)
         const old_tasks_completed_str = localStorage.getItem("tasks-completed") || "";
         const new_tasks_completed_str = old_tasks_completed_str + "\"" + encodeURI(task_name) + "\"" + task_in_minutes;
@@ -92,13 +92,13 @@ function physics_loop(task_duration) {
         const drip = drip_array[i];
         drip.step(delta);
         // if the drip is in the jar
-        if (drip.posY < 0) {
+        if (drip.posY < 120 + 80 * elapsed_time / task_duration) {
             // remove drip
             $drip_column.removeChild(drip.element);
             drip_array.splice(i, 1);
             // update jar
             num_drips++;
-            $water.style.height = (100 * elapsed_time / task_duration) + "px";
+            $water.style.height = (80 * elapsed_time / task_duration) + "pt";
 
             // splicing means the next array item went down in position,
             // to the current item's position.
@@ -114,8 +114,8 @@ function create_drip() {
     $drip_el.src = "droplet.png"
     $drip_el.classList.add("drip");
     const drip = new Drip(
-        395, // starting x position, px
-        400, // starting y position, px
+        220, // starting x position, pt
+        500, // starting y position, pt
         random_centered(10), // starting x velocity, -10px/s < v < 10px/s
         0, // starting y velocity, px/s
         $drip_el, // the dom element
@@ -172,11 +172,12 @@ function draw_jar_stack() {
     for (let i = 1; i < completed_tasks_pieces.length; i += 2) {
         const name = decodeURI(completed_tasks_pieces[i]);
         const minutes = parseInt(completed_tasks_pieces[i+1]);
-        const $new_jar = document.createElement("div");
-        $new_jar.innerText = name + " " + minutes;
+        const $new_jar = document.createElement("img");
+        // $new_jar.innerText = name + " " + minutes;
         $new_jar.classList.add("jar");
-        $new_jar.style.left = 220 + x * 110 + "px"; // 100 is the size of the jar, 110 gives a gap 
-        $new_jar.style.bottom = y * 100 + "px";
+        $new_jar.src = "full-jar.png";
+        $new_jar.style.left = 200 + x * 80 + "pt"; // 80 is the size of the jar, 90 gives a gap, 200 just pushes the whole stack over to the right so it's out of the way
+        $new_jar.style.bottom = y * 80 + "pt";
         x -= .5;
         y += 1;
         if (x < prev_max_x * .5) { 
