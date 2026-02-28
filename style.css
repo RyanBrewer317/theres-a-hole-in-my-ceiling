@@ -56,17 +56,28 @@ input:focus {
     height: 100%;
 }
 
-#current-jar {
+#jar-stack {
     position: absolute;
+    display: flex;
+    background-color: greenyellow;
+    gap: 5px;
     bottom: 0;
     left: 350px;
+}
+
+.jar {
+    background-color: grey;
 }
 
 #current-jar, .jar {
     width: 100px;
     height: 100px;
-    background-color: grey; 
     position: absolute;
+}
+
+#current-jar {
+    bottom: 0;
+    left: 350px;
 }
 
 #jar-stack {
@@ -78,19 +89,25 @@ input:focus {
 }
 
 
-.drip {
-    width: 100px;
-    height: 100px;
-    background-color: blue;
+#water {
     position: absolute;
+    bottom: 0;
+    left: 350px;
+    height: 0;
+    width: 100px;
+    overflow: hidden;
 }
 
-#hole {
-    width: 100px;
-    height: 100px;
-    background-color: black;
+#water-color {
     position: absolute;
-    left: 350px;
+    bottom: 0;
+    height: 100px;
+    width: 100px;
+}
+
+.drip {
+    width: 10px;
+    position: absolute;
 }
 
 #completed-tasks-temp {
