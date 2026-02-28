@@ -175,7 +175,7 @@ function draw_jar_stack() {
         const $new_jar = document.createElement("div");
         $new_jar.innerText = name + " " + minutes;
         $new_jar.classList.add("jar");
-        $new_jar.style.left = x * 110 + "px"; // 100 is the size of the jar, 110 gives a gap 
+        $new_jar.style.left = 220 + x * 110 + "px"; // 100 is the size of the jar, 110 gives a gap 
         $new_jar.style.bottom = y * 100 + "px";
         x -= .5;
         y += 1;
