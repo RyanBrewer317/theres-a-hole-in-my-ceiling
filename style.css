@@ -83,6 +83,7 @@ input:focus {
     background-color: greenyellow;
     gap: 5pt;
     bottom: 0;
+    left: 0;
 }
 
 
