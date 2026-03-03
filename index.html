@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link href="room.png" rel="preload" as="image" type="image/png">
     <link href="style.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,14 +24,13 @@
         <button id="restart-task">Try another task</button>
     </div>
     <div id="game-view">
-        <div id="jar-stack">
-        </div>
         <div id="drip-column">
             <img id="current-jar" src="empty-jar.png">
             <div id="water">
                 <img id="water-color" src="full-jar.png">
             </div>
         </div>
+        <div id="jar-stack"></div>
     </div>
     <div id="completed-tasks-temp"></div>
 </body>
