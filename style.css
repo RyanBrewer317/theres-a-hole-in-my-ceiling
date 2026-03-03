@@ -21,7 +21,7 @@ input {
     top: 100pt;
     margin-inline: auto;
     background-color: white;
-    z-index: 2;
+    z-index: 3;
 }
 
 input {
@@ -75,6 +75,7 @@ input:focus {
 #current-jar {
     bottom: 120pt;
     left: 185pt;
+    z-index: 2;
 }
 
 #jar-stack {
