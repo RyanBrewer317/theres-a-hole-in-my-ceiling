@@ -173,6 +173,7 @@ function draw_jar_stack() {
         const name = decodeURI(completed_tasks_pieces[i]);
         const minutes = parseInt(completed_tasks_pieces[i+1]);
         const $new_jar = document.createElement("img");
+        //$new_jar.setAttribute("task", );
         // $new_jar.innerText = name + " " + minutes;
         $new_jar.classList.add("jar");
         $new_jar.src = "full-jar.png";
@@ -193,3 +194,18 @@ function draw_jar_stack() {
 }
 
 draw_jar_stack()
+
+
+document.addEventListener('mousemove', function(event) {
+  const $currentElement = document.elementFromPoint(event.clientX, event.clientY);
+  const $hover_info = document.getElementById("hover-info");
+  if ($currentElement && $currentElement.classList.contains("jar")) {
+    $hover_info.style.visibility = "visible";
+    $hover_info.style.left = event.clientX + "px";
+    $hover_info.style.top = event.clientY + "px";
+    $hover_info.innerText = "wow";
+  } else {
+    $hover_info.style.visibility = "hidden";
+  }
+});
+
