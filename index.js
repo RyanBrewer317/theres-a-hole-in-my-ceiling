@@ -54,6 +54,8 @@ $start_task.addEventListener("click", (e) => {
     const task_duration = task_in_minutes * 60 * 1000; // covert from minutes to ms
     clearInterval(interval);
     interval = setInterval(()=>physics_loop(task_duration), 1);
+
+    draw_jar_stack();
     // set a timeout for task end
     setTimeout((e) => {
         $water.style.height = "100pt";
@@ -161,51 +163,89 @@ function draw_jar_stack() {
     const completed_tasks_pieces = completed_tasks_str.split("\"");
     const $jar_stack = document.getElementById("jar-stack");
     $jar_stack.innerHTML = ""
-    // this math I just found by plotting out the coordiantes of a triangle
+    // this math I found by plotting out the coordiantes of a triangle
     let prev_max_x = 0;
     let prev_max_y = 0;
     let x = 0;
     let y = 0;
+    let stack_index = 0;
+    let jars_left_in_current_stack = jar_stack_list[stack_index].max;
     // the stored tasks format is `"name1"time1"name2"time2` etc.
     // so we split it on the quotation marks, into ["", "name1", "time1", "name2", "time2"]
     // i = 1 skips the first one, i += 2 means we progress in twos
     for (let i = 1; i < completed_tasks_pieces.length; i += 2) {
+        // move on to the next stack when stack is filled
+        if (jars_left_in_current_stack <= 0) {
+            stack_index ++;
+            jars_left_in_current_stack = jar_stack_list[stack_index].max;
+            prev_max_x = 0;
+            prev_max_y = 0;
+            x = 0;
+            y = 0;
+        }
         const name = decodeURI(completed_tasks_pieces[i]);
         const minutes = parseInt(completed_tasks_pieces[i+1]);
         const $new_jar = document.createElement("img");
-        //$new_jar.setAttribute("task", );
+        $new_jar.setAttribute("task", name);
         // $new_jar.innerText = name + " " + minutes;
         $new_jar.classList.add("jar");
+        $new_jar.style.width = 80 * jar_stack_list[stack_index].scale + "pt";
+        $new_jar.style.height = 80 * jar_stack_list[stack_index].scale + "pt";
         $new_jar.src = "full-jar.png";
-        $new_jar.style.left = 200 + x * 80 + "pt"; // 80 is the size of the jar, 90 gives a gap, 200 just pushes the whole stack over to the right so it's out of the way
-        $new_jar.style.bottom = y * 80 + "pt";
-        x -= .5;
-        y += 1;
-        if (x < prev_max_x * .5) { 
-            prev_max_x += 1; 
-            x = prev_max_x; 
-        }
-        if (y > prev_max_y) { 
-            y = 0; 
-            prev_max_y += 1; 
+        if (jar_stack_list[stack_index].triangle == true) {
+            $new_jar.style.left = jar_stack_list[stack_index].x + jar_stack_list[stack_index].scale * (x * 80) + "pt"; // 80 is the size of the jar, 90 gives a gap
+            $new_jar.style.bottom = jar_stack_list[stack_index].y + jar_stack_list[stack_index].scale *  (y * 80) + "pt";
+            x -= .5;
+            y += 1;
+            if (x < prev_max_x * .5) { 
+                prev_max_x += 1; 
+                x = prev_max_x; 
+            }
+            if (y > prev_max_y) { 
+                y = 0; 
+                prev_max_y += 1; 
+            }
+        } else if (jar_stack_list[stack_index].triangle == false){
+            $new_jar.style.left = jar_stack_list[stack_index].x + jar_stack_list[stack_index].scale * (x * 90) + "pt"; // 80 is the size of the jar, 90 gives a gap
+            $new_jar.style.bottom = jar_stack_list[stack_index].y + "pt";
+            x ++;
         }
         $jar_stack.appendChild($new_jar);
+        jars_left_in_current_stack --;
     }
 }
+
+const jar_stack_list = [];
+
+// x, y: bottom left of stack
+// scale: scale of entire stack
+// triangle == true means it stacks, triangle == false means it stays flat
+// max: max jars allowed in stack
+// third shelf
+jar_stack_list.push({x: 340, y: 331, scale: .26, triangle: false, max: 3});
+// second shelf
+jar_stack_list.push({x: 340, y: 287, scale: .26, triangle: false, max: 3});
+// jars on top of shelf
+jar_stack_list.push({x: 390, y: 395, scale: .26, triangle: true, max: 5});
+// on ground
+jar_stack_list.push({x: 50, y: 180, scale: .35, triangle: true, max: Infinity});
 
 draw_jar_stack()
 
 
-document.addEventListener('mousemove', function(event) {
-  const $currentElement = document.elementFromPoint(event.clientX, event.clientY);
-  const $hover_info = document.getElementById("hover-info");
-  if ($currentElement && $currentElement.classList.contains("jar")) {
-    $hover_info.style.visibility = "visible";
-    $hover_info.style.left = event.clientX + "px";
-    $hover_info.style.top = event.clientY + "px";
-    $hover_info.innerText = "wow";
-  } else {
-    $hover_info.style.visibility = "hidden";
-  }
-});
+document.addEventListener('mousemove', show_hover_info);
+document.addEventListener('click', show_hover_info);
+
+function show_hover_info(event) {
+    const $currentElement = document.elementFromPoint(event.clientX, event.clientY);
+    const $hover_info = document.getElementById("hover-info");
+    if ($currentElement && $currentElement.classList.contains("jar")) {
+        $hover_info.style.opacity = "1";
+        $hover_info.innerText = $currentElement.getAttribute("task");
+    } else {
+        $hover_info.style.opacity = "0";
+    }
+    $hover_info.style.left = event.pageX + "px";
+    $hover_info.style.top = event.pageY - $hover_info.offsetHeight + "px";
+}
 

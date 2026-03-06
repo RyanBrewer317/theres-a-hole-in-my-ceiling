@@ -21,7 +21,7 @@ input {
     top: 100pt;
     margin-inline: auto;
     background-color: white;
-    z-index: 2;
+    z-index: 3;
 }
 
 input {
@@ -44,7 +44,8 @@ input:focus {
     margin-inline: auto;
     background-color: white;
     z-index: 2;
-    visibility: hidden;
+    transition: opacity 0.3s ease-in-out;
+    opacity: 1;
 }
 
 .knewave-regular {
@@ -89,6 +90,7 @@ input:focus {
 #current-jar {
     bottom: 120pt;
     left: 185pt;
+    z-index: 2;
 }
 
 #jar-stack {
@@ -97,6 +99,7 @@ input:focus {
     background-color: greenyellow;
     gap: 5pt;
     bottom: 0;
+    left: 0;
 }
 
 
