@@ -33,6 +33,21 @@ input:focus {
     outline: none;
 }
 
+#hover-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10pt;
+    border: 1px solid lightgrey;
+    border-radius: 5pt;
+    position: absolute;
+    margin-inline: auto;
+    background-color: white;
+    z-index: 2;
+    transition: opacity 0.3s ease-in-out;
+    opacity: 1;
+}
+
 .knewave-regular {
     font-family: "Knewave", system-ui;
     font-weight: 400;

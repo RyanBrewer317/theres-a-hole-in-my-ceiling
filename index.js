@@ -186,6 +186,7 @@ function draw_jar_stack() {
         const name = decodeURI(completed_tasks_pieces[i]);
         const minutes = parseInt(completed_tasks_pieces[i+1]);
         const $new_jar = document.createElement("img");
+        $new_jar.setAttribute("task", name);
         // $new_jar.innerText = name + " " + minutes;
         $new_jar.classList.add("jar");
         $new_jar.style.width = 80 * jar_stack_list[stack_index].scale + "pt";
@@ -231,4 +232,20 @@ jar_stack_list.push({x: 50, y: 180, scale: .35, triangle: true, max: Infinity});
 
 draw_jar_stack()
 
+
+document.addEventListener('mousemove', show_hover_info);
+document.addEventListener('click', show_hover_info);
+
+function show_hover_info(event) {
+    const $currentElement = document.elementFromPoint(event.clientX, event.clientY);
+    const $hover_info = document.getElementById("hover-info");
+    if ($currentElement && $currentElement.classList.contains("jar")) {
+        $hover_info.style.opacity = "1";
+        $hover_info.innerText = $currentElement.getAttribute("task");
+    } else {
+        $hover_info.style.opacity = "0";
+    }
+    $hover_info.style.left = event.pageX + "px";
+    $hover_info.style.top = event.pageY - $hover_info.offsetHeight + "px";
+}
 
