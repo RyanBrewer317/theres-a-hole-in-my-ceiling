@@ -23,6 +23,7 @@ class Drip {
 let last_physics;
 let start_time = Date.now();
 let last_drip_time = start_time;
+let elapsed_time;
 
 // "const" here means `drip_array` always refers to the same list, 
 // even if the list is changing.
@@ -58,7 +59,6 @@ $start_task.addEventListener("click", (e) => {
     draw_jar_stack();
     // set a timeout for task end
     setTimeout((e) => {
-        $water.style.height = "100pt";
         clearInterval(interval)
         const old_tasks_completed_str = localStorage.getItem("tasks-completed") || "";
         const new_tasks_completed_str = old_tasks_completed_str + "\"" + encodeURI(task_name) + "\"" + task_in_minutes;
@@ -100,7 +100,7 @@ function physics_loop(task_duration) {
             drip_array.splice(i, 1);
             // update jar
             num_drips++;
-            $water.style.height = (80 * elapsed_time / task_duration) + "pt";
+            $water.style.height = (80 * elapsed_time / 3600000) + "pt";
 
             // splicing means the next array item went down in position,
             // to the current item's position.
@@ -134,29 +134,29 @@ function random_centered(radius) {
     return Math.random() * (2 * radius) - radius;
 }
 
-function draw_completed_tasks() {
-    const completed_tasks_str = localStorage.getItem("tasks-completed") || "";
-    const completed_tasks_pieces = completed_tasks_str.split("\"");
-    const $completed_tasks_list = document.getElementById("completed-tasks-temp");
-    $completed_tasks_list.innerHTML = "<button onclick=\"localStorage.clear();draw_completed_tasks();\">clear</button>";
-    // the stored tasks format is `"name1"time1"name2"time2` etc.
-    // so we split it on the quotation marks, into ["", "name1", "time1", "name2", "time2"]
-    // i = 1 skips the first one, i += 2 means we progress in twos
-    for (let i = 1; i < completed_tasks_pieces.length; i += 2) {
-        const name = decodeURI(completed_tasks_pieces[i]);
-        const minutes = parseInt(completed_tasks_pieces[i+1]);
-        const $p = document.createElement("p");
-        const $name = document.createElement("i");
-        $name.innerHTML = name;
-        $p.appendChild($name);
-        $p.appendChild(document.createTextNode(
-            ": " + minutes + (minutes == 1? " minute" : " minutes")
-        ));
-        $completed_tasks_list.appendChild($p);
-    }
-}
+// function draw_completed_tasks() {
+//     const completed_tasks_str = localStorage.getItem("tasks-completed") || "";
+//     const completed_tasks_pieces = completed_tasks_str.split("\"");
+//     const $completed_tasks_list = document.getElementById("completed-tasks-temp");
+//     $completed_tasks_list.innerHTML = "<button onclick=\"localStorage.clear();draw_completed_tasks();\">clear</button>";
+//     // the stored tasks format is `"name1"time1"name2"time2` etc.
+//     // so we split it on the quotation marks, into ["", "name1", "time1", "name2", "time2"]
+//     // i = 1 skips the first one, i += 2 means we progress in twos
+//     for (let i = 1; i < completed_tasks_pieces.length; i += 2) {
+//         const name = decodeURI(completed_tasks_pieces[i]);
+//         const minutes = parseInt(completed_tasks_pieces[i+1]);
+//         const $p = document.createElement("p");
+//         const $name = document.createElement("i");
+//         $name.innerHTML = name;
+//         $p.appendChild($name);
+//         $p.appendChild(document.createTextNode(
+//             ": " + minutes + (minutes == 1? " minute" : " minutes")
+//         ));
+//         $completed_tasks_list.appendChild($p);
+//     }
+// }
 
-draw_completed_tasks();
+// draw_completed_tasks();
 
 function draw_jar_stack() {
     const completed_tasks_str = localStorage.getItem("tasks-completed") || "";
@@ -185,13 +185,27 @@ function draw_jar_stack() {
         }
         const name = decodeURI(completed_tasks_pieces[i]);
         const minutes = parseInt(completed_tasks_pieces[i+1]);
-        const $new_jar = document.createElement("img");
-        $new_jar.setAttribute("task", name);
-        // $new_jar.innerText = name + " " + minutes;
-        $new_jar.classList.add("jar");
-        $new_jar.style.width = 80 * jar_stack_list[stack_index].scale + "pt";
-        $new_jar.style.height = 80 * jar_stack_list[stack_index].scale + "pt";
-        $new_jar.src = "full-jar.png";
+        const width = 80 * jar_stack_list[stack_index].scale;
+        const height = 80 * jar_stack_list[stack_index].scale;
+        const task = name + ": " + minutes + "min";
+        function new_el(tag, class_name) {
+            const $el = document.createElement(tag);
+            $el.style.width = width + "pt";
+            $el.style.height = height + "pt";
+            if (class_name) $el.classList.add(class_name);
+            $el.setAttribute("task", task);
+            return $el;
+        }
+        const $new_jar = new_el("div", "jar");
+        const $new_jar_background = new_el("img", "jar-background");
+        $new_jar_background.src = "empty-jar.png";
+        $new_jar.appendChild($new_jar_background);
+        const $new_jar_water = new_el("div", "jar-water");
+        $new_jar_water.style.height = (height * minutes / 60) + "pt";
+        const $new_jar_water_color = new_el("img", "jar-water-color");
+        $new_jar_water_color.src = "full-jar.png";
+        $new_jar_water.appendChild($new_jar_water_color);
+        $new_jar.appendChild($new_jar_water);
         if (jar_stack_list[stack_index].triangle == true) {
             $new_jar.style.left = jar_stack_list[stack_index].x + jar_stack_list[stack_index].scale * (x * 80) + "pt"; // 80 is the size of the jar, 90 gives a gap
             $new_jar.style.bottom = jar_stack_list[stack_index].y + jar_stack_list[stack_index].scale *  (y * 80) + "pt";
@@ -239,7 +253,11 @@ document.addEventListener('click', show_hover_info);
 function show_hover_info(event) {
     const $currentElement = document.elementFromPoint(event.clientX, event.clientY);
     const $hover_info = document.getElementById("hover-info");
-    if ($currentElement && $currentElement.classList.contains("jar")) {
+    if ($currentElement && 
+            (  $currentElement.classList.contains("jar-water-color") 
+            || $currentElement.classList.contains("jar-background")
+            )
+    ) {
         $hover_info.style.opacity = "1";
         $hover_info.innerText = $currentElement.getAttribute("task");
     } else {
