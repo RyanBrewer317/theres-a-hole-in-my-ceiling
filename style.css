@@ -103,16 +103,20 @@ input:focus {
 }
 
 
-#water {
+#water, .jar-water {
     position: absolute;
-    bottom: 120pt;
-    left: 185pt;
     height: 0;
     width: 80pt;
     overflow: hidden;
+    bottom: 0pt;
 }
 
-#water-color {
+#water {
+    bottom: 120pt;
+    left: 185pt;
+}
+
+#water-color, .jar-water-color {
     position: absolute;
     bottom: 0;
     height: 80pt;
