@@ -29,6 +29,8 @@ let last_drip_time = start_time;
 const drip_array = []; 
 let num_drips = 0;
 
+let current_room = 0;
+
 const $start_task = document.getElementById("start-task");
 const $restart_task = document.getElementById("restart-task");
 const $new_task = document.getElementById("new-task");
@@ -38,6 +40,17 @@ const $task_name = document.getElementById("task-name");
 const $task_duration = document.getElementById("task-duration");
 const $current_jar = document.getElementById("current-jar");
 const $water = document.getElementById("water");
+const $prev_room_button = document.getElementById("prev-room-button");
+const $next_room_button = document.getElementById("next-room-button");
+
+$next_room_button.addEventListener("click", () => {
+    current_room++; 
+    draw_jar_stack();
+});
+$prev_room_button.addEventListener("click", () => {
+    current_room--;
+    draw_jar_stack();
+});
 
 let interval;
 
@@ -73,6 +86,8 @@ $start_task.addEventListener("click", (e) => {
 $restart_task.addEventListener("click", (e) => {
     $complete_task.hidden = true;
     $new_task.hidden = false;
+    $water.style.height = 0 + "pt";
+    draw_jar_stack();
 })
 
 function physics_loop(task_duration) {
@@ -160,7 +175,9 @@ draw_completed_tasks();
 
 function draw_jar_stack() {
     const completed_tasks_str = localStorage.getItem("tasks-completed") || "";
-    const completed_tasks_pieces = completed_tasks_str.split("\"");
+    const completed_tasks_pieces = completed_tasks_str.split("\"").slice(1); // get rid of first empty piece
+    const num_tasks_complete = (completed_tasks_pieces.length) / 2;
+    const current_room_task_pieces = completed_tasks_pieces.slice(2 * (jars_per_room * current_room), 2 * (jars_per_room * (current_room + 1)));
     const $jar_stack = document.getElementById("jar-stack");
     $jar_stack.innerHTML = ""
     // this math I found by plotting out the coordiantes of a triangle
@@ -171,9 +188,9 @@ function draw_jar_stack() {
     let stack_index = 0;
     let jars_left_in_current_stack = jar_stack_list[stack_index].max;
     // the stored tasks format is `"name1"time1"name2"time2` etc.
-    // so we split it on the quotation marks, into ["", "name1", "time1", "name2", "time2"]
-    // i = 1 skips the first one, i += 2 means we progress in twos
-    for (let i = 1; i < completed_tasks_pieces.length; i += 2) {
+    // so we split it on the quotation marks, into ["name1", "time1", "name2", "time2"]
+    // i += 2 means we progress in twos
+    for (let i = 0; i < current_room_task_pieces.length; i += 2) {
         // move on to the next stack when stack is filled
         if (jars_left_in_current_stack <= 0) {
             stack_index ++;
@@ -183,8 +200,8 @@ function draw_jar_stack() {
             x = 0;
             y = 0;
         }
-        const name = decodeURI(completed_tasks_pieces[i]);
-        const minutes = parseInt(completed_tasks_pieces[i+1]);
+        const name = decodeURI(current_room_task_pieces[i]);
+        const minutes = parseInt(current_room_task_pieces[i+1]);
         const $new_jar = document.createElement("img");
         $new_jar.setAttribute("task", name);
         // $new_jar.innerText = name + " " + minutes;
@@ -213,6 +230,27 @@ function draw_jar_stack() {
         $jar_stack.appendChild($new_jar);
         jars_left_in_current_stack --;
     }
+    console.log(num_tasks_complete, jars_per_room)
+
+    if(num_tasks_complete > jars_per_room) {
+        $next_room_button.style.visibility = "visible";
+        $prev_room_button.style.visibility = "visible";
+        console.log(current_room, (jars_per_room), num_tasks_complete)
+        if ((current_room + 1) * jars_per_room > num_tasks_complete) {
+            $next_room_button.disabled = true;
+            $next_room_button.style.opacity = "50%";
+        } else {
+            $next_room_button.disabled = false;
+            $next_room_button.style.opacity = "100%";
+        }
+        if (current_room == 0) {
+            $prev_room_button.disabled = true;
+            $prev_room_button.style.opacity = "50%";
+        } else {
+            $prev_room_button.disabled = false;
+            $prev_room_button.style.opacity = "100%";
+        }
+    }
 }
 
 const jar_stack_list = [];
@@ -228,9 +266,11 @@ jar_stack_list.push({x: 340, y: 287, scale: .26, triangle: false, max: 3});
 // jars on top of shelf
 jar_stack_list.push({x: 390, y: 395, scale: .26, triangle: true, max: 5});
 // on ground
-jar_stack_list.push({x: 50, y: 180, scale: .35, triangle: true, max: Infinity});
+jar_stack_list.push({x: 50, y: 180, scale: .35, triangle: true, max: 3});
 
-draw_jar_stack()
+jars_per_room = jar_stack_list.reduce((accumulator, current_val) => accumulator + current_val.max, 0)
+
+draw_jar_stack();
 
 
 document.addEventListener('mousemove', show_hover_info);
